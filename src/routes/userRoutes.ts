@@ -5,9 +5,17 @@ const router: Router = Router()
 const prisma = new PrismaClient()
 
 //post a user
-router.post('/', (req: Request, res: Response) => {
-    const { } = req.body;
-    res.status(501).json({ error: 'Not implemented' })
+router.post('/', async (req: Request, res: Response) => {
+    const { email, name, username, bio } = req.body;
+    const result = await prisma.user.create({
+        data: {
+            email,
+            name,
+            username,
+            bio,
+        }
+    })
+    res.status(201).json(result)
 })
 
 //get all users
@@ -19,20 +27,38 @@ router.get('/', async (req: Request, res: Response) => {
 //get a single user
 router.get('/:id', async (req: Request, res: Response) => {
     const { id } = req.params
-    const user = await prisma.user.findUnique({ where: { id: Number(id) } })
+    const user = await prisma.user.findUnique({
+        where: { id: Number(id) }
+    })
     res.status(200).json(user)
 })
 
 //update a user
-router.put('/:id', (req: Request, res: Response) => {
+router.put('/:id', async (req: Request, res: Response) => {
     const { id } = req.params
-    res.status(501).json({ error: 'Not implemented' })
+    const { bio, username, image } = req.body;
+    try {
+        const result = await prisma.user.update({
+            where: { id: Number(id) },
+            data: {
+                bio,
+                username,
+                image,
+            }
+        })
+        res.json(result);
+    } catch (e) {
+        res.status(400).json({ error: 'Failed to update the user' })
+    }
 })
 
 //delete a user
-router.delete('/:id', (req: Request, res: Response) => {
+router.delete('/:id', async (req: Request, res: Response) => {
     const { id } = req.params
-    res.status(501).json({ error: 'Not implemented' })
+    await prisma.user.delete({
+        where: { id: Number(id) }
+    })
+    res.status(200)
 })
 
 export default router;
