@@ -18,6 +18,8 @@ model User {
     name       String
     username   String    @unique
     image      String?
+    sizes      Size[]
+    categories   Category[]
     bio        String?
     isVerified Boolean   @default(false)
     products   Product[]
@@ -29,9 +31,24 @@ model Product {
     name                String
     price               Float
     location            String?
+    sizes               Size[]
+    categories          Category[]
     product_description String
     createdAt           DateTime @default(now())
     updatedAt           DateTime @updatedAt
     User                User?    @relation(fields: [userId], references: [id])
     userId              Int?
+}
+
+enum Size {
+  Small
+  Medium
+  Large
+  XLarge
+}
+
+enum Category {
+   Children
+   Men
+   Women
 }
